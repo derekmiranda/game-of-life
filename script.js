@@ -88,9 +88,19 @@ function randomPoints(n, w, h) {
   })
 }
 
+const createClickCoordAdjuster = (canvas) => {
+  const { x, y } = canvas.getBoundingClientRect()
+  return (clientX, clientY) => ({
+    x: clientX - x,
+    y: clientY - y
+  })
+}
+
 function main() {
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
+  const clickCoordAdjuster = createClickCoordAdjuster(canvas)
+
   const resizedWidth = canvas.width / PIXEL_SCALE 
   const resizedHeight = canvas.height / PIXEL_SCALE 
   const middle_x = ~~(resizedWidth / 2)
