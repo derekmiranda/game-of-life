@@ -1,4 +1,4 @@
-const DRAW_INTERVAL = 1000
+const DRAW_INTERVAL = 500
 const PIXEL_SCALE = 4
 
 const createPoint = (x, y) => ({ x, y })
@@ -20,17 +20,47 @@ const createBoard = ({ width, height, points }) => {
   return boardArr
 }
 
-function checkPointAgainstNeighbors({ x, y, points }) {
-  // Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
-  // Any live cell with two or three live neighbours lives on to the next generation.
-  // Any live cell with more than three live neighbours dies, as if by overpopulation.
-  // Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.  
+const countLiveNeighbors = neighbors => neighbors.reduce((sum, neighbor) => {
+  return neighbor ? sum + 1 : sum
+}, 0)
+
+function gatherNeighbors({ pt_x, pt_y, board }) {
+  const neighbors = []
+  for (let x = pt_x - 1; x <= pt_x + 1; x++) {
+    for (let y = pt_y - 1; y <= pt_y + 1; y++) {
+      if (x === pt_x && y === pt_y) continue
+      neighbors.push(board[x] && board[x][y])
+    }
+  }
+  return neighbors
 }
 
-function calcNewBoard(pts) {
-  if (!pts) return []
+function checkPointAgainstNeighbors({ x, y, board }) {
+  const current = board[x][y]
+  const neighbors = gatherNeighbors({ pt_x: x, pt_y: y, board })
+  const liveNeighborCount = countLiveNeighbors(neighbors)
 
+  if (current) {
+    // Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
+    // Any live cell with more than three live neighbours dies, as if by overpopulation.
+    if (liveNeighborCount < 2 || liveNeighborCount > 3) return false
 
+    // Any live cell with two or three live neighbours lives on to the next generation.
+    return true
+  }
+
+  // Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.  
+  if (liveNeighborCount === 3) return true
+
+  return false
+}
+
+function calcNewBoard(board) {
+  if (!board) return [[]]
+  const newBoard = board.map((col, x) => {
+    return col.map((pt, y) => checkPointAgainstNeighbors({ x, y, board }))
+  }) 
+  return newBoard
 }
 
 function drawPoint(ctx, x, y, fillStyle = 'navy') {
@@ -38,15 +68,16 @@ function drawPoint(ctx, x, y, fillStyle = 'navy') {
   ctx.fillRect(x * PIXEL_SCALE, y * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE)
 }
 
-function render(ctx, board) {
+function render(ctx, board, canvas) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
   board.forEach((col, x) => {
     col.forEach((isAlive, y) => isAlive && drawPoint(ctx, x, y))
   })
 }
 
-function beginRenderLoop(ctx, board) {
-  render(ctx, board)
-  setTimeout(beginRenderLoop, DRAW_INTERVAL, ctx, calcNewBoard(board))
+function beginRenderLoop(ctx, board, canvas) {
+  render(ctx, board, canvas)
+  setTimeout(beginRenderLoop, DRAW_INTERVAL, ctx, calcNewBoard(board), canvas)
 }
 
 function randomPoints(n, w, h) {
@@ -66,7 +97,8 @@ function main() {
   const middle_y = ~~(resizedHeight / 2)
   const points = [
     createPoint(middle_x, middle_y),
-    createPoint(middle_x + 1, middle_y),
+    createPoint(middle_x, middle_y + 1),
+    createPoint(middle_x, middle_y + 2),
   ]
 
   const board = createBoard({
@@ -75,8 +107,7 @@ function main() {
     points
   })
 
-  // beginRenderLoop()
-  render(ctx, board)
+  beginRenderLoop(ctx, board, canvas)
 }
 
 document.addEventListener('readystatechange', () => {
