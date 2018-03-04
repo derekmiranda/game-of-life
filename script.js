@@ -1,10 +1,11 @@
 const DRAW_INTERVAL = 1000
-const Point = (x, y) => ({ x, y })
-const Board = ({ width, height, points }) => {
+const PIXEL_SCALE = 4
+
+const createPoint = (x, y) => ({ x, y })
+const createBoard = ({ width, height, points }) => {
   const createRowArr = (xVals, y) => {
-    const rowArr = new Array(height).fill(false)
+    const rowArr = new Array(width).fill(false)
     xVals.forEach(x => {
-      console.log('x', x)
       rowArr[x] = true
     })
     return rowArr
@@ -28,9 +29,9 @@ function calcNewBoard(pts) {
   // Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 }
 
-function drawPoint(ctx, x, y, fillStyle = 'salmon') {
+function drawPoint(ctx, x, y, fillStyle = 'navy') {
   ctx.fillStyle = fillStyle
-  ctx.fillRect(x, y, 1, 1)
+  ctx.fillRect(x * PIXEL_SCALE, y * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE)
 }
 
 function render(ctx, board) {
@@ -44,12 +45,24 @@ function beginRenderLoop(ctx, board) {
   setTimeout(beginRenderLoop, DRAW_INTERVAL, ctx, calcNewBoard(board))
 }
 
+function randomPoints(n, w, h) {
+  return new Array(n).fill(true).map(_ => {
+    const x = ~~(Math.random() * w)
+    const y = ~~(Math.random() * h)
+    return createPoint(x, y)
+  })
+}
+
 function main() {
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-  const board = Board({
-    width: canvas.width,
-    height: canvas.height,
+  const resizedWidth = canvas.width / PIXEL_SCALE 
+  const resizedHeight = canvas.height / PIXEL_SCALE 
+  const points = randomPoints(5, resizedWidth, resizedHeight)
+
+  const board = createBoard({
+    width: resizedWidth,
+    height: resizedHeight,
     points
   })
 
