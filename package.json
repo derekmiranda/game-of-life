@@ -1,0 +1,14 @@
+{
+  "name": "game-of-life",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:derekmiranda/game-of-life.git",
+  "author": "Derek Miranda <derek.miranda.1992@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "serve": "static ."
+  },
+  "devDependencies": {
+    "node-static": "^0.7.10"
+  }
+}

@@ -19,9 +19,7 @@ const { beginRenderLoop, render, turnCellOn } = (() => {
   let board
   function turnCellOn(board_x, board_y) {
     if (board) {
-      setTimeout(() => {
-        applyToPlus({ board, x: board_x, y: board_y, changeCell: () => true })
-      }, 0)
+      applyToPlus({ board, x: board_x, y: board_y, changeCell: () => true })
     }
   }
 
