@@ -33,14 +33,19 @@ function main() {
   const clickCoordAdjuster = createClickCoordAdjuster(canvas);
   const flipBoard = createBoardFlipper(clickCoordAdjuster);
 
+  // set canvas to window dims
+  ctx.canvas.width = document.body.scrollWidth;
+  // estimating inner height w/o scrollbar
+  ctx.canvas.height = window.innerHeight - 50;
+
   canvas.addEventListener("mousemove", event => {
     if (event.buttons !== 1) return;
     flipBoard(event);
   });
   canvas.addEventListener("click", flipBoard);
 
-  const resizedWidth = canvas.width / PIXEL_SCALE;
-  const resizedHeight = canvas.height / PIXEL_SCALE;
+  const resizedWidth = ~~(canvas.width / PIXEL_SCALE);
+  const resizedHeight = ~~(canvas.height / PIXEL_SCALE);
   const middle_x = ~~(resizedWidth / 2);
   const middle_y = ~~(resizedHeight / 2);
   const points = [
