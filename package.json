@@ -6,9 +6,10 @@
   "author": "Derek Miranda <derek.miranda.1992@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "serve": "static ."
+    "open": "node open-in-browser.js"
   },
   "devDependencies": {
-    "node-static": "^0.7.10"
+    "node-static": "^0.7.10",
+    "open": "^0.0.5"
   }
 }
