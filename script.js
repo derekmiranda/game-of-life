@@ -6,7 +6,7 @@ function drawPoint(ctx, x, y, fillStyle = "navy") {
   ctx.fillRect(x * PIXEL_SCALE, y * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE);
 }
 
-const createClickCoordAdjuster = canvas => {
+const createClickCoordAdjuster = (canvas) => {
   const { x, y } = canvas.getBoundingClientRect();
   return (clientX, clientY) => {
     const canvas_x = clientX - x;
@@ -15,12 +15,12 @@ const createClickCoordAdjuster = canvas => {
     const board_y = roundNum(canvas_y / PIXEL_SCALE);
     return {
       x: board_x,
-      y: board_y
+      y: board_y,
     };
   };
 };
 
-const createBoardFlipper = clickCoordAdjuster => {
+const createBoardFlipper = (clickCoordAdjuster) => {
   return ({ clientX, clientY, buttons }) => {
     const { x, y } = clickCoordAdjuster(clientX, clientY);
     turnCellOn(x, y);
@@ -38,7 +38,7 @@ function main() {
   // estimating inner height w/o scrollbar
   ctx.canvas.height = window.innerHeight - 50;
 
-  canvas.addEventListener("mousemove", event => {
+  canvas.addEventListener("mousemove", (event) => {
     if (event.buttons !== 1) return;
     flipBoard(event);
   });
@@ -51,13 +51,13 @@ function main() {
   const points = [
     createPoint(middle_x, middle_y),
     createPoint(middle_x, middle_y + 1),
-    createPoint(middle_x, middle_y + 2)
+    createPoint(middle_x, middle_y + 2),
   ];
 
   const initBoard = createBoard({
     width: resizedWidth,
     height: resizedHeight,
-    points
+    points,
   });
 
   beginRenderLoop(ctx, canvas, initBoard);
