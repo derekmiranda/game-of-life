@@ -6,11 +6,12 @@
   "author": "Derek Miranda <derek.miranda.1992@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "open": "node open-in-browser.js"
+    "start": "node open-in-browser.mjs"
   },
   "devDependencies": {
     "node-static": "^0.7.10",
     "open": "^10.1.0",
+    "prettier-eslint": "^16.3.0",
     "webpack": "^5.94.0"
   }
 }
